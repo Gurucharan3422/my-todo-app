@@ -36,7 +36,7 @@ function Register() {
     setError('');
 
     try {
-      await axios.post('http://localhost:5000/api/users/register', {
+      await axios.post('https://my-todo-app-3iv4.onrender.com', {
         name,
         email,
         password,

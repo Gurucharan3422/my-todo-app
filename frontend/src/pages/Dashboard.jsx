@@ -16,7 +16,7 @@ const Dashboard = () => {
         return;
       }
       try {
-        const response = await axios.get('http://localhost:5000/api/tasks', {
+        const response = await axios.get('https://my-todo-app-3iv4.onrender.com', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTasks(Array.isArray(response.data) ? response.data : []);
