@@ -94,7 +94,7 @@ const deleteTask = async (req, res) => {
     }
 
     // Remove the task from the database
-    await task.remove();
+    const deleteData = await Task.deleteOne({ _id: req.params.id })
 
     res.status(200).json({ message: 'Task deleted successfully' });
   } catch (error) {

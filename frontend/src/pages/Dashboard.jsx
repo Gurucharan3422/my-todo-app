@@ -138,7 +138,7 @@ const Dashboard = () => {
               <p>Status: {task.status}</p>
               {task.status === 'pending' && (
                 <>
-                  <button onClick={() => handleMarkComplete(task._id)}>Mark as Completed</button>
+                  {/* <button onClick={() => handleMarkComplete(task._id)}>Mark as Completed</button> */}
                   <button 
                     onClick={() => handleDeleteTask(task._id)} 
                     style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}>
