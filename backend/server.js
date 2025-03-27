@@ -2,15 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes'); // Import userRoutes
-const taskRoutes = require('./routes/taskRoutes'); // Import taskRoutes (if applicable)
+const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Body parsing middleware
-app.use(cors()); // Enable CORS
+app.use(express.json());
+app.use(cors());
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URL, {
@@ -21,12 +21,12 @@ mongoose.connect(process.env.MONGO_URL, {
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Define Routes
-app.use('/api/users', userRoutes); // Auth routes (login, register, etc.)
-app.use('/api/tasks', taskRoutes); // Task routes (if applicable)
+app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Error Handling Middleware
-app.use(notFound); // Handle unknown routes
-app.use(errorHandler); // Handle errors
+app.use(notFound);
+app.use(errorHandler);
 
 // Basic Route
 app.get('/', (req, res) => {
@@ -35,6 +35,6 @@ app.get('/', (req, res) => {
 
 // Server Listen
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => { // Bind to 0.0.0.0
   console.log(`Server is running on port ${PORT}`);
 });
