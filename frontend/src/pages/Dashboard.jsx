@@ -42,7 +42,7 @@ const Dashboard = () => {
     }
     try {
       const newTask = { taskName, description, expectedTime };
-      const response = await axios.post('http://localhost:5000/api/tasks', newTask, {
+      const response = await axios.post('https://my-todo-app-3iv4.onrender.com/api/tasks', newTask, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks([...tasks, response.data]);
