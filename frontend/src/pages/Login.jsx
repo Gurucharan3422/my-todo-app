@@ -28,6 +28,7 @@ function Login() {
 
   return (
     <div className="auth-container">
+      <h1 style={{ color: '#007bff' }}>Guru To-Do App</h1>
       <h1>Login</h1>
       {error && <p className="error-text">{error}</p>}
       <form className="auth-form" onSubmit={handleSubmit}>
