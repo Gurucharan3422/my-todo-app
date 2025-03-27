@@ -16,7 +16,7 @@ const Dashboard = () => {
         return;
       }
       try {
-        const response = await axios.get('https://my-todo-app-3iv4.onrender.com', {
+        const response = await axios.get('https://my-todo-app-3iv4.onrender.com/api/tasks', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTasks(Array.isArray(response.data) ? response.data : []);
@@ -29,49 +29,75 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
-  // Create a new task
+  // Handle task creation
   const handleCreateTask = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Please log in to create a task.');
       return;
     }
+
     if (!taskName || !description || !expectedTime) {
-      alert('All fields are required!');
+      alert('Please fill out all fields!');
       return;
     }
+
     try {
-      const newTask = { taskName, description, expectedTime };
-      const response = await axios.post('https://my-todo-app-3iv4.onrender.com/api/tasks', newTask, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTasks([...tasks, response.data]);
-      setTaskName('');
-      setDescription('');
-      setExpectedTime('');
-      alert('Task created successfully!');
+      const response = await axios.post(
+        'https://my-todo-app-3iv4.onrender.com/api/tasks',
+        {
+          taskName,
+          description,
+          expectedTime,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 201) {
+        setTasks([...tasks, response.data]); // Add the newly created task to the state
+        alert('Task created successfully!');
+        setTaskName('');
+        setDescription('');
+        setExpectedTime('');
+      } else {
+        alert('Failed to create task');
+      }
     } catch (error) {
       console.error('Error creating task:', error);
       alert(error?.response?.data?.message || 'Failed to create task');
     }
   };
 
-  // Mark task as completed
-  const handleMarkComplete = async (taskId) => {
+  // Delete Task
+  const handleDeleteTask = async (taskId) => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Please log in to update a task.');
+      alert('Please log in to delete a task.');
       return;
     }
-    try {
-      await axios.put(`http://localhost:5000/api/tasks/${taskId}`, { status: 'completed' }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTasks(tasks.map(task => task._id === taskId ? { ...task, status: 'completed' } : task));
-      alert('Task marked as completed!');
-    } catch (error) {
-      console.error('Error marking task as complete:', error);
-      alert(error?.response?.data?.message || 'Failed to update task');
+
+    console.log(`Attempting to delete task with ID: ${taskId}`);
+    const url = `https://my-todo-app-3iv4.onrender.com/api/tasks/${taskId}`;
+
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        const response = await axios.delete(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          // If the task is deleted successfully, remove it from state
+          setTasks(tasks.filter(task => task._id !== taskId));
+          alert('Task deleted successfully!');
+        } else {
+          alert('Failed to delete task');
+        }
+      } catch (error) {
+        console.error('Error deleting task:', error);
+        alert(error?.response?.data?.message || 'Failed to delete task');
+      }
     }
   };
 
@@ -111,9 +137,14 @@ const Dashboard = () => {
               <p>Expected Time: {task.expectedTime} minutes</p>
               <p>Status: {task.status}</p>
               {task.status === 'pending' && (
-                <button onClick={() => handleMarkComplete(task._id)}>
-                  Mark as Completed
-                </button>
+                <>
+                  <button onClick={() => handleMarkComplete(task._id)}>Mark as Completed</button>
+                  <button 
+                    onClick={() => handleDeleteTask(task._id)} 
+                    style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}>
+                    Delete Task
+                  </button>
+                </>
               )}
             </li>
           ))
